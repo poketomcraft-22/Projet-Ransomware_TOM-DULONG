@@ -40,10 +40,10 @@ Projet/
 
 ## 🚀 Protocole de Test
 1. Préparation du dossier cible
-```text
 Le malware cible spécifiquement le dossier ~/Documents/CIBLE. Si ce dossier est vide, le programme crée automatiquement un fichier témoin :
-Fichier créé : coucou.txt contenant un message de test. Cela permet de démontrer le chiffrement même sur une machine vierge.
-```
+    **Fichier créé** : coucou.txt contenant un message de test. Cela permet de démontrer le chiffrement même sur une machine vierge.
+**Connexion** : Le serveur affiche l'UUID et la clé de la victime. Ces infos sont sauvegardées dans `base_victimes.txt` qui est créer quand la première connexion est lancé.
+
 2. Lancement de la démonstration
 
 Ouvrez deux terminaux Linux :
@@ -58,16 +58,11 @@ Terminal Victime (Client) :
 cd ~/Python/Projet/Client
 python3 client.py
 ```
-Connexion : 
-```text
-Le serveur affiche l'UUID et la clé de la victime. Ces infos sont sauvegardées dans `base_victimes.txt` qui est créer quand la première connexion est lancé.
-```
+
 ## ⚙️ Détails de l'implémentation
 Gestion des flux réseau:
-```text
 Pour les transferts de fichiers, le programme utilise un en-tête de 16 octets `ljust(16)`. Cet en-tête informe le destinataire de la taille exacte des données à recevoir, ce qui empêche le blocage des sockets TCP et permet de transférer des fichiers de n'importe quelle taille.
-```
+
 Sécurité du code:
-```text
 Si le serveur envoie une commande inconnue ou erronée, le client répond "Commande inconnue" au lieu de crasher. Cela maintient la synchronisation constante du flux.
-```
+
