@@ -1,8 +1,5 @@
 # 🛡️ Projet de Simulation Ransomware
 
-## ⚠️ Avertissement Légal
-Ce projet est réalisé dans un cadre strictement pédagogique pour le module de cybersécurité. L'objectif est de comprendre les mécanismes d'un serveur de contrôle (C2) et les vecteurs d'attaque par ransomware. Toute utilisation à des fins malveillantes est strictement interdite.
-
 ## 📝 Présentation du projet
 Ce programme implémente une architecture Client/Serveur en Python. Il simule une attaque de ransomware complète, de l'exfiltration des clés au chiffrement des données, avec des capacités de gestion de fichiers à distance.
 
@@ -44,9 +41,7 @@ Projet/
 Le malware cible spécifiquement le dossier ~/Documents/CIBLE. Si ce dossier est vide, le programme crée automatiquement un fichier témoin :
 **Fichier créé** : coucou.txt contenant un message de test. Cela permet de démontrer le chiffrement même sur une machine vierge.
 
-**Connexion** : Le serveur affiche l'UUID et la clé de la victime. Ces infos sont sauvegardées dans `base_victimes.txt` qui est créer quand la première connexion est lancé.
-
-3. Lancement de la démonstration
+2. Lancement de la démonstration
 
 Ouvrez deux terminaux Linux :
 ```bash
@@ -60,6 +55,7 @@ Terminal Victime (Client) :
 cd ~/Python/Projet/Client
 python3 client.py
 ```
+**Connexion** : Le serveur affiche l'UUID et la clé de la victime. Ces infos sont sauvegardées dans `base_victimes.txt` qui est créer quand la première connexion est lancé.
 
 ## ⚙️ Détails de l'implémentation
 - **Gestion des flux réseau**:
