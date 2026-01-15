@@ -21,7 +21,7 @@ Projet/
 │   ├── client.py        # Le malware (exécuté sur la victime)
 │   └── Fichier-DL.txt   # Fichier de test à exfiltrer (Download)
 └── Serveur/
-    ├── serveur.py       # Interface de contrôle (C2)
+    ├── serveur.py       # Interface de contrôle
     ├── Fichier-Up.txt   # Fichier à envoyer sur la victime (Upload)
     └── base_victimes.txt # Journal des connexions et des clés reçues
 ```
