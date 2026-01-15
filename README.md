@@ -44,13 +44,13 @@ Le malware cible spécifiquement le dossier ~/Documents/CIBLE. Si ce dossier est
 2. Lancement de la démonstration
 
 Ouvrez deux terminaux Linux :
-```bash
-Terminal Attaquant (Serveur) :
 
+**Terminal Attaquant** (Serveur) :
+```bash
 cd ~/Python/Projet/Serveur
 python3 serveur.py
 ```
-Terminal Victime (Client) :
+**Terminal Victime** (Client) :
 ```bash
 cd ~/Python/Projet/Client
 python3 client.py
