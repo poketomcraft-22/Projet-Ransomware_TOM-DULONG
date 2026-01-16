@@ -1,8 +1,10 @@
 # A FAIRE SUR UN DEBIAN OU AUTRE LINUX SUR LE MÊME NOYAU
+---
 # 🛡️ Projet de Simulation Ransomware
+---
 ## 📝 Présentation du projet
 Ce programme implémente une architecture **Client/Serveur** en Python simulant un Ransomware piloté par un serveur. Il permet de comprendre les mécanismes d'exfiltration, de chiffrement et de contrôle à distance.
-
+---
 ### Fonctionnalités implémentées :
 - **Identification unique** : Récupération de l'UUID matériel via `/proc/sys/kernel/random/uuid`.
 - **Exfiltration automatique** : Envoi immédiat de l'identifiant et de la clé de chiffrement au serveur dès la connexion.
@@ -37,6 +39,7 @@ Projet/
     ├── base_victimes.txt  # Stockage persistant des clés exfiltrées (généré à l'exécution)
     └── logs.txt           # Historique complet des actions (généré à l'exécution)
 ```
+---
 ## 🛠️ Guide des Commandes
 | Commande | Action |
 | :--- | :--- |
@@ -46,7 +49,7 @@ Projet/
 | `upload` | Envoie un fichier présent sur le serveur vers la victime (ex: `Fichier-UP.txt`). |
 | `download` | Récupère un fichier présent chez la victime vers le serveur(ex: `Fichier-DL.txt`). |
 | `quitter` | Ferme la session de contrôle proprement. |
-
+---
 ## 🚀 Protocole de Test
 ### 1. Préparation du dossier cible
 Le malware cible le dossier `~/Documents/CIBLE.` S'il est absent ou vide, le client crée automatiquement `coucou.txt` pour permettre le test de chiffrement.
@@ -64,7 +67,7 @@ python3 serveur.py
 cd ~/Python/Projet/Client
 python3 client.py
 ```
-
+---
 ## 📜 Système de Logs (Traçabilité)
 
 Le projet intègre une gestion avancée des événements pour l'analyse a posteriori :
@@ -72,7 +75,7 @@ Le projet intègre une gestion avancée des événements pour l'analyse a poster
     - **Logs Serveur** (`logs.txt`) : Horodatage et classification des événements (`INFO`, `ACTION`, `ERROR`, `EXFILTRATION`) pour surveiller le parc de machines.
 
     - **Logs Client** (`.client_debug.log`) : Fichier caché sur la machine victime (préfixe `.`) permettant à l'attaquant de vérifier le bon fonctionnement du malware sans alerter l'utilisateur.
-
+---
 ## ⚙️ Fonctionnement du Protocole
 
 Le protocole de communication est conçu pour être robuste :
@@ -80,7 +83,7 @@ Le protocole de communication est conçu pour être robuste :
     - **Synchronisation** : Pour chaque transfert (Upload/Download), un en-tête de 16 octets informe le destinataire de la taille des données à lire.
 
     - **Résilience** : Un bloc de sécurité `else` dans la boucle client intercepte les commandes inconnues pour éviter que le malware ne s'arrête en cas d'erreur de saisie sur le serveur.
-
+---
 ## ⚠️ Limites et Faiblesses
 
 Bien que fonctionnel, ce ransomware présente des limites par rapport à une menace réelle :
