@@ -37,12 +37,12 @@ Projet/
 | `quitter` | Ferme la session de contrôle proprement. |
 
 ## 🚀 Protocole de Test
-1. Préparation du dossier cible
+### 1. Préparation du dossier cible
 
 Le malware cible spécifiquement le dossier ~/Documents/CIBLE. Si ce dossier est vide, le programme crée automatiquement un fichier témoin :
 - **Fichier créé** : coucou.txt contenant un message de test. Cela permet de démontrer le chiffrement même sur une machine vierge.
 
-2. Lancement de la démonstration
+### 2. Lancement de la démonstration
 
 Ouvrez deux terminaux Linux :
 
