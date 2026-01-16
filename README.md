@@ -32,12 +32,10 @@ Projet/
 ├── Client/
 │   ├── client.py          # Le malware
 │   ├── Fichier-DL.txt     # Fichier à exfiltrer (test download)
-│   └── .client_debug.log  # Log local caché (généré à l'exécution)
 └── Serveur/
     ├── serveur.py         # Interface de contrôle
     ├── Fichier-Up.txt     # Fichier à propager (test upload)
     ├── base_victimes.txt  # Stockage persistant des clés exfiltrées (généré à l'exécution)
-    └── logs.txt           # Historique complet des actions (généré à l'exécution)
 ```
 ---
 ## 🛠️ Guide des Commandes
@@ -67,14 +65,6 @@ python3 serveur.py
 cd ~/Python/Projet/Client
 python3 client.py
 ```
----
-## 📜 Système de Logs (Traçabilité)
-
-Le projet intègre une gestion avancée des événements pour l'analyse a posteriori :
-
-- **Logs Serveur** (`logs.txt`) : Horodatage et classification des événements (`INFO`, `ACTION`, `ERROR`, `EXFILTRATION`) pour surveiller le parc de machines.
-
-- **Logs Client** (`.client_debug.log`) : Fichier caché sur la machine victime (préfixe `.`) permettant à l'attaquant de vérifier le bon fonctionnement du malware sans alerter l'utilisateur.
 ---
 ## ⚙️ Fonctionnement du Protocole
 
