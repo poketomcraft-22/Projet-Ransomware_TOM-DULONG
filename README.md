@@ -57,12 +57,12 @@ Le malware cible le dossier `~/Documents/CIBLE.` S'il est absent ou vide, le cli
 ### 2. Lancement de la démonstration
 Ouvrez deux terminaux Linux :
 
-**Terminal Attaquant** (Serveur) :
+- **Terminal Attaquant** (Serveur) :
 ```bash
 cd ~/Python/Projet/Serveur
 python3 serveur.py
 ```
-**Terminal Victime** (Client) :
+- **Terminal Victime** (Client) :
 ```bash
 cd ~/Python/Projet/Client
 python3 client.py
@@ -72,26 +72,26 @@ python3 client.py
 
 Le projet intègre une gestion avancée des événements pour l'analyse a posteriori :
 
-    - **Logs Serveur** (`logs.txt`) : Horodatage et classification des événements (`INFO`, `ACTION`, `ERROR`, `EXFILTRATION`) pour surveiller le parc de machines.
+- **Logs Serveur** (`logs.txt`) : Horodatage et classification des événements (`INFO`, `ACTION`, `ERROR`, `EXFILTRATION`) pour surveiller le parc de machines.
 
-    - **Logs Client** (`.client_debug.log`) : Fichier caché sur la machine victime (préfixe `.`) permettant à l'attaquant de vérifier le bon fonctionnement du malware sans alerter l'utilisateur.
+- **Logs Client** (`.client_debug.log`) : Fichier caché sur la machine victime (préfixe `.`) permettant à l'attaquant de vérifier le bon fonctionnement du malware sans alerter l'utilisateur.
 ---
 ## ⚙️ Fonctionnement du Protocole
 
 Le protocole de communication est conçu pour être robuste :
 
-    - **Synchronisation** : Pour chaque transfert (Upload/Download), un en-tête de 16 octets informe le destinataire de la taille des données à lire.
+- **Synchronisation** : Pour chaque transfert (Upload/Download), un en-tête de 16 octets informe le destinataire de la taille des données à lire.
 
-    - **Résilience** : Un bloc de sécurité `else` dans la boucle client intercepte les commandes inconnues pour éviter que le malware ne s'arrête en cas d'erreur de saisie sur le serveur.
+- **Résilience** : Un bloc de sécurité `else` dans la boucle client intercepte les commandes inconnues pour éviter que le malware ne s'arrête en cas d'erreur de saisie sur le serveur.
 ---
 ## ⚠️ Limites et Faiblesses
 
 Bien que fonctionnel, ce ransomware présente des limites par rapport à une menace réelle :
 
-    - **Chiffrement Symétrique (XOR)** : La clé est la même pour chiffrer et déchiffrer. Si la clé est interceptée, le déchiffrement est trivial.
+- **Chiffrement Symétrique (XOR)** : La clé est la même pour chiffrer et déchiffrer. Si la clé est interceptée, le déchiffrement est trivial.
 
-    - **Absence d'Obfuscation** : Le code est en clair (Python) et facilement détectable par une analyse statique ou un antivirus.
+- **Absence d'Obfuscation** : Le code est en clair (Python) et facilement détectable par une analyse statique ou un antivirus.
 
-    - **Communication Non-Chiffrée** : Les échanges entre le client et le serveur circulent en clair sur le réseau (pas de TLS/SSL), ce qui permet à un IDS (Système de Détection d'Intrusion) de lire les commandes.
+- **Communication Non-Chiffrée** : Les échanges entre le client et le serveur circulent en clair sur le réseau (pas de TLS/SSL), ce qui permet à un IDS (Système de Détection d'Intrusion) de lire les commandes.
 
-    - **Persistance** : Le malware ne se relance pas automatiquement au redémarrage de la machine.
+- **Persistance** : Le malware ne se relance pas automatiquement au redémarrage de la machine.
